@@ -1,0 +1,18 @@
+{
+  "name": "dnd_character_sheet",
+  "version": "1.0.0",
+  "description": "A reactive webcomponent dnd_character_sheet",
+  "main": "public/index.js",
+  "repository": "git@github.com:qr8r/dnd_character_sheet.git",
+  "author": "Brendan Deere <brendan.g.deere@gmail.com>",
+  "license": "MIT",
+  "private": false,
+  "devDependencies": {
+    "@web/dev-server": "^0.1.35",
+    "typescript": "^4.9.4"
+  },
+  "dependencies": {
+    "immer": "^9.0.16",
+    "lit": "^2.5.0"
+  }
+}
