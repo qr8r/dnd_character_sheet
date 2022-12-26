@@ -2,13 +2,17 @@
   "name": "dnd_character_sheet",
   "version": "1.0.0",
   "description": "A reactive webcomponent dnd_character_sheet",
-  "main": "public/index.js",
+  "main": "build/index.js",
   "repository": "git@github.com:qr8r/dnd_character_sheet.git",
   "author": "Brendan Deere <brendan.g.deere@gmail.com>",
   "license": "MIT",
   "private": false,
   "devDependencies": {
+    "@rollup/plugin-typescript": "^10.0.1",
     "@web/dev-server": "^0.1.35",
+    "@web/rollup-plugin-html": "^1.11.0",
+    "rollup": "^3.8.1",
+    "rollup-plugin-node-resolve": "^5.2.0",
     "typescript": "^4.9.4"
   },
   "dependencies": {
