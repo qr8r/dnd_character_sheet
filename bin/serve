@@ -1,0 +1,5 @@
+concurrently                              \
+  --names build,web                       \
+  --prefix-colors blue,green              \
+  'rollup --watch -c ./rollup.config.mjs' \
+  'wds -c ./web-dev-server.config.mjs'
