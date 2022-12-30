@@ -28,7 +28,7 @@
      * Copyright 2019 Google LLC
      * SPDX-License-Identifier: BSD-3-Clause
      */
-    const t$1=globalThis,e$3=t$1.ShadowRoot&&(void 0===t$1.ShadyCSS||t$1.ShadyCSS.nativeShadow)&&"adoptedStyleSheets"in Document.prototype&&"replace"in CSSStyleSheet.prototype,s$3=Symbol(),n$3=new WeakMap;let o$3 = class o{constructor(t,e,n){if(this._$cssResult$=!0,n!==s$3)throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");this.cssText=t,this.t=e;}get styleSheet(){let t=this.o;const s=this.t;if(e$3&&void 0===t){const e=void 0!==s&&1===s.length;e&&(t=n$3.get(s)),void 0===t&&((this.o=t=new CSSStyleSheet).replaceSync(this.cssText),e&&n$3.set(s,t));}return t}toString(){return this.cssText}};const r$2=t=>new o$3("string"==typeof t?t:t+"",void 0,s$3),S$1=(s,n)=>{e$3?s.adoptedStyleSheets=n.map((t=>t instanceof CSSStyleSheet?t:t.styleSheet)):n.forEach((e=>{const n=document.createElement("style"),o=t$1.litNonce;void 0!==o&&n.setAttribute("nonce",o),n.textContent=e.cssText,s.appendChild(n);}));},c$2=e$3||void 0===t$1.CSSStyleSheet?t=>t:t=>t instanceof CSSStyleSheet?(t=>{let e="";for(const s of t.cssRules)e+=s.cssText;return r$2(e)})(t):t;
+    const t$1=globalThis,e$3=t$1.ShadowRoot&&(void 0===t$1.ShadyCSS||t$1.ShadyCSS.nativeShadow)&&"adoptedStyleSheets"in Document.prototype&&"replace"in CSSStyleSheet.prototype,s$3=Symbol(),n$3=new WeakMap;let o$3 = class o{constructor(t,e,n){if(this._$cssResult$=!0,n!==s$3)throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");this.cssText=t,this.t=e;}get styleSheet(){let t=this.o;const s=this.t;if(e$3&&void 0===t){const e=void 0!==s&&1===s.length;e&&(t=n$3.get(s)),void 0===t&&((this.o=t=new CSSStyleSheet).replaceSync(this.cssText),e&&n$3.set(s,t));}return t}toString(){return this.cssText}};const r$2=t=>new o$3("string"==typeof t?t:t+"",void 0,s$3),i$1=(t,...e)=>{const n=1===t.length?t[0]:e.reduce(((e,s,n)=>e+(t=>{if(!0===t._$cssResult$)return t.cssText;if("number"==typeof t)return t;throw Error("Value passed to 'css' function must be a 'css' function result: "+t+". Use 'unsafeCSS' to pass non-literal values, but take care to ensure page security.")})(s)+t[n+1]),t[0]);return new o$3(n,t,s$3)},S$1=(s,n)=>{e$3?s.adoptedStyleSheets=n.map((t=>t instanceof CSSStyleSheet?t:t.styleSheet)):n.forEach((e=>{const n=document.createElement("style"),o=t$1.litNonce;void 0!==o&&n.setAttribute("nonce",o),n.textContent=e.cssText,s.appendChild(n);}));},c$2=e$3||void 0===t$1.CSSStyleSheet?t=>t:t=>t instanceof CSSStyleSheet?(t=>{let e="";for(const s of t.cssRules)e+=s.cssText;return r$2(e)})(t):t;
 
     /**
      * @license
@@ -65,10 +65,262 @@
     class ApplicationComponent extends s {
     }
 
-    let PagesHome = class PagesHome extends ApplicationComponent {
+    let CharacterHeader$1 = class CharacterHeader extends ApplicationComponent {
+        static { this.properties = {
+            value: {
+                type: Number,
+            },
+            proficient: {
+                type: Boolean,
+                reflect: true,
+            },
+            name: {
+                type: String,
+            },
+        }; }
+        static { this.styles = i$1 `
+    :host {
+      text-align: center;
+    }
+
+    #details {
+      display: flex;
+      flex-direction: column;
+
+      position: relative;
+
+      padding: 8px;
+      padding-bottom: 13px;
+      margin-bottom: 10px;
+
+      border: 2px solid black;
+      border-radius: 4px;
+
+      width: 30px;
+    }
+
+    #details::after {
+      content: '';
+      display: block;
+
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+
+      transform: translate(-50%, 50%) rotate(45deg);
+
+      border: 1px solid black;
+      background-color: white;
+
+      height: 10px;
+      width: 10px;
+    }
+
+    :host([proficient="true"]) #details::after {
+      background-color: magenta;
+    }
+
+    #name {
+      font-size: 8px;
+    }
+
+    #value {
+    }
+
+    #modifier {
+      font-size: 12px;
+    }
+  `; }
         render() {
             return y `
-      Home page
+      <span id="name">
+        ${this.name}
+      </span>
+
+      <section id="details">
+        <span id="value">
+          ${this.value}
+        </span>
+
+        <span id="modifier">
+          +3
+        </span>
+      </section>
+    `;
+        }
+    };
+    CharacterHeader$1 = __decorate([
+        e("ability-score")
+    ], CharacterHeader$1);
+
+    let CharacterHeader = class CharacterHeader extends ApplicationComponent {
+        static { this.properties = {
+            name: {
+                type: String,
+            }
+        }; }
+        static { this.styles = i$1 `
+    h1 {
+      margin-bottom: 0;
+    }
+
+    ul {
+      display: flex;
+
+      margin-top: 0;
+      padding: 0;
+
+      list-style: none;
+    }
+
+    li {
+      font-size: 12px;
+    }
+
+    li:not(:last-child)::after {
+      content: "\u2022";
+      display: inline-block;
+
+      margin: 0 4px;
+    }
+  `; }
+        render() {
+            return y `
+      <section>
+        <h1>${this.name}</h1>
+
+        <ul>
+          <li>6th Level</li>
+          <li>Gnome</li>
+          <li>Rogue</li>
+        </ul>
+      </section>
+    `;
+        }
+    };
+    CharacterHeader = __decorate([
+        e("character-header")
+    ], CharacterHeader);
+
+    let PagesHome$1 = class PagesHome extends ApplicationComponent {
+        static { this.properties = {
+            value: {
+                type: Number,
+            },
+            label: {
+                type: String,
+            },
+            max: {
+                type: Number,
+            },
+            color: {
+                type: String,
+            },
+        }; }
+        static { this.styles = i$1 `
+    :host {
+      display: block;
+    }
+
+    label {
+      font-size: 10px;
+    }
+
+    #bar {
+      height: 10px;
+
+      border: 1px solid black;
+      border-radius: 10px;
+    }
+  `; }
+        render() {
+            return y `
+      <label>${this.label}</label>
+      <div
+        id="bar"
+        style="background-color: ${this.color};"
+      ></div>
+    `;
+        }
+    };
+    PagesHome$1 = __decorate([
+        e("progress-bar")
+    ], PagesHome$1);
+
+    let PagesHome = class PagesHome extends ApplicationComponent {
+        static { this.styles = i$1 `
+    :host {
+      display: block;
+
+      width: 412px;
+      margin: 0 auto;
+    }
+
+    #ability-scores {
+      display: flex;
+      justify-content: space-between;
+    }
+  `; }
+        render() {
+            return y `
+      <character-header
+        name="Cabot Snoodlepuff"
+      ></character-header>
+
+      <section id="ability-scores">
+        <ability-score
+          name="Dexterity"
+          value=16
+          proficient=true
+        ></ability-score>
+
+        <ability-score
+          name="Constitution"
+          value=16
+          proficient=false
+        ></ability-score>
+
+        <ability-score
+          name="Strength"
+          value=16
+          proficient=false
+        ></ability-score>
+
+        <ability-score
+          name="Charisma"
+          value=16
+          proficient=false
+        ></ability-score>
+
+        <ability-score
+          name="Intelligence"
+          value=16
+          proficient=true
+        ></ability-score>
+
+        <ability-score
+          name="Wisdom"
+          value=16
+          proficient=false
+        ></ability-score>
+      </section>
+
+      <section part="health-points">
+        <progress-bar
+          label="Health points"
+          value=34
+          max=100
+          color="red"
+        ></progress-bar>
+
+        <progress-bar
+          style="width: 40%;"
+          label="Temporary health points"
+          value=3
+          max=10
+          color="blue"
+        ></progress-bar>
+      </section>
     `;
         }
     };
