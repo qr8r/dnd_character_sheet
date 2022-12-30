@@ -8,8 +8,6 @@ export default class PagesHome extends ApplicationComponent {
   override render() {
     return html`
       Home page
-      New
-      more new
     `
   }
 }

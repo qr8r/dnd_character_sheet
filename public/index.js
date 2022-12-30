@@ -69,8 +69,6 @@
         render() {
             return y `
       Home page
-      New
-      more new
     `;
         }
     };

@@ -1,5 +1,25 @@
-concurrently                              \
-  --names build,web                       \
-  --prefix-colors blue,green              \
-  'rollup --watch -c ./rollup.config.mjs' \
-  'wds -c ./web-dev-server.config.mjs'
+#!/usr/bin/env bash
+
+read -rd '' rollup <<-CMD
+  yarn run rollup          \
+    --watch                \
+    --no-watch.clearScreen \
+    --config ./rollup.config.mjs
+CMD
+
+read -rd '' dev_server <<-CMD
+  yarn run web-dev-server \
+    --config ./web-dev-server.config.mjs
+CMD
+
+read -rd '' storybook_server <<-CMD
+  yarn run web-dev-server \
+    --config ./storybook-server.config.mjs
+CMD
+
+concurrently                         \
+  --names build,storybook,web        \
+  --prefix-colors blue,magenta,green \
+  "$rollup"                          \
+  "$dev_server"                      \
+  "$storybook_server"
