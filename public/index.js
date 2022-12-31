@@ -231,14 +231,30 @@
 
       border: 1px solid black;
       border-radius: 10px;
+
+      background: left / 200%;
+
+      transition: background-position linear 1s;
     }
   `; }
+        damageStyles() {
+            const value = this.value / this.max * 100;
+            return `
+      background-position: calc(100% - ${value}%);
+      background-image: linear-gradient(
+        to right,
+        ${this.color} 50%,
+        transparent 50%
+      );
+    `;
+        }
         render() {
             return y `
       <label>${this.label}</label>
+
       <div
         id="bar"
-        style="background-color: ${this.color};"
+        style="${this.damageStyles()}"
       ></div>
     `;
         }
@@ -316,7 +332,7 @@
         <progress-bar
           style="width: 40%;"
           label="Temporary health points"
-          value=3
+          value=8
           max=10
           color="blue"
         ></progress-bar>

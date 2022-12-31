@@ -77,7 +77,7 @@ export default class PagesHome extends ApplicationComponent {
         <progress-bar
           style="width: 40%;"
           label="Temporary health points"
-          value=3
+          value=8
           max=10
           color="blue"
         ></progress-bar>

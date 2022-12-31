@@ -5,10 +5,10 @@ import ApplicationComponent from 'shared/application_component'
 
 @customElement("progress-bar")
 export default class PagesHome extends ApplicationComponent {
-  declare label: String
-  declare value: Number
-  declare max: Number
-  declare color: String
+  declare label: string
+  declare value: number
+  declare max: number
+  declare color: string
 
   static override properties = {
     value: {
@@ -39,14 +39,33 @@ export default class PagesHome extends ApplicationComponent {
 
       border: 1px solid black;
       border-radius: 10px;
+
+      background: left / 200%;
+
+      transition: background-position linear 1s;
     }
   `
+
+  damageStyles() {
+    const value = this.value / this.max * 100
+
+    return `
+      background-position: calc(100% - ${ value }%);
+      background-image: linear-gradient(
+        to right,
+        ${ this.color } 50%,
+        transparent 50%
+      );
+    `
+  }
+
   override render() {
     return html`
       <label>${ this.label }</label>
+
       <div
         id="bar"
-        style="background-color: ${this.color};"
+        style="${ this.damageStyles() }"
       ></div>
     `
   }
