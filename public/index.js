@@ -23,6 +23,10 @@
         return c > 3 && r && Object.defineProperty(target, key, r), r;
     }
 
+    function __metadata(metadataKey, metadataValue) {
+        if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(metadataKey, metadataValue);
+    }
+
     /**
      * @license
      * Copyright 2019 Google LLC
@@ -62,8 +66,214 @@
      * SPDX-License-Identifier: BSD-3-Clause
      */var l;null!=(null===(l=globalThis.HTMLSlotElement)||void 0===l?void 0:l.prototype.assignedElements)?(o,l)=>o.assignedElements(l):(o,l)=>o.assignedNodes(l).filter((o=>o.nodeType===Node.ELEMENT_NODE));
 
-    class ApplicationComponent extends s {
+    class PubSub {
+        constructor() {
+            this.events = {};
+        }
+        subscribe(event, callback) {
+            const callbacks = this.events[event] || [];
+            return callbacks.push(callback);
+        }
+        publish(event, data = {}) {
+            const callbacks = this.events[event] || [];
+            return callbacks.map(callback => callback(data));
+        }
     }
+
+    var Statuses;
+    (function (Statuses) {
+        Statuses["Action"] = "action";
+        Statuses["Mutation"] = "mutation";
+        Statuses["Resting"] = "resting";
+    })(Statuses || (Statuses = {}));
+    var Events;
+    (function (Events) {
+        Events["StateChange"] = "stateChange";
+    })(Events || (Events = {}));
+    class Store {
+        constructor(params) {
+            const self = this;
+            this.actions = params.actions || {};
+            this.events = new PubSub();
+            this.mutations = params.mutations || {};
+            this.status = Statuses.Resting;
+            this.state = new Proxy(params.state || {}, {
+                set: function (state, key, value) {
+                    if (self.status !== Statuses.Mutation) {
+                        console.warn(`${key} changed without a mutation`);
+                    }
+                    state[key] = value;
+                    self.events.publish(Events.StateChange, self.state);
+                    self.status = Statuses.Resting;
+                    return true;
+                }
+            });
+        }
+        dispatch(key, payload) {
+            this.status = Statuses.Action;
+            const action = this.actions[key];
+            if (action) {
+                action(this, payload);
+                return true;
+            }
+            else {
+                console.warn(`Action ${key} does not exist`);
+                return false;
+            }
+        }
+        commit(key, payload) {
+            this.status = Statuses.Mutation;
+            const mutation = this.mutations[key];
+            if (mutation) {
+                const newState = mutation(this.state, payload);
+                this.state = Object.assign(this.state, newState);
+                return true;
+            }
+            else {
+                console.warn(`Mutation ${key} does not exist`);
+                return false;
+            }
+        }
+    }
+
+    class ApplicationComponent extends s {
+        constructor({ store } = {}) {
+            super();
+            if (store) {
+                store.events.subscribe(Events.StateChange, () => this.render);
+            }
+        }
+    }
+
+    var actions = {};
+
+    var mutations = {};
+
+    var state = {
+        character: {
+            name: 'Cabot Snoodlepuff',
+            level: 6,
+            ancestry: {
+                name: 'Gnome'
+            },
+            class: {
+                name: 'Rogue'
+            },
+            health: [
+                {
+                    label: 'Health points',
+                    value: 34,
+                    max: 100,
+                    color: 'red',
+                },
+                {
+                    label: 'Health points',
+                    value: 8,
+                    max: 10,
+                    color: 'blue',
+                },
+            ],
+            abilityScores: [
+                {
+                    name: 'Constitution',
+                    value: 16,
+                    proficient: true,
+                },
+                {
+                    name: 'Dexterity',
+                    value: 16,
+                    proficient: true,
+                },
+                {
+                    name: 'Charisma',
+                    value: 16,
+                    proficient: false,
+                },
+                {
+                    name: 'Wisdom',
+                    value: 16,
+                    proficient: false,
+                },
+                {
+                    name: 'Intelligence',
+                    value: 16,
+                    proficient: false,
+                },
+                {
+                    name: 'Strength',
+                    value: 16,
+                    proficient: true,
+                },
+            ]
+        }
+    };
+
+    var store = new Store({
+        actions,
+        mutations,
+        state,
+    });
+
+    let PagesHome$1 = class PagesHome extends ApplicationComponent {
+        static { this.properties = {
+            value: {
+                type: Number,
+            },
+            label: {
+                type: String,
+            },
+            max: {
+                type: Number,
+            },
+            color: {
+                type: String,
+            },
+        }; }
+        static { this.styles = i$1 `
+    :host {
+      display: block;
+    }
+
+    label {
+      font-size: 10px;
+    }
+
+    #bar {
+      height: 10px;
+
+      border: 1px solid black;
+      border-radius: 10px;
+
+      background: left / 200%;
+
+      transition: background-position linear 1s;
+    }
+  `; }
+        damageStyles() {
+            const value = this.value / this.max * 100;
+            return `
+      background-position: calc(100% - ${value}%);
+      background-image: linear-gradient(
+        to right,
+        ${this.color} 50%,
+        transparent 50%
+      );
+    `;
+        }
+        render() {
+            return y `
+      <label>${this.label}</label>
+
+      <div
+        id="bar"
+        style="${this.damageStyles()}"
+      ></div>
+    `;
+        }
+    };
+    PagesHome$1 = __decorate([
+        e("progress-bar")
+    ], PagesHome$1);
 
     let CharacterHeader$1 = class CharacterHeader extends ApplicationComponent {
         static { this.properties = {
@@ -157,7 +367,16 @@
         static { this.properties = {
             name: {
                 type: String,
-            }
+            },
+            level: {
+                type: Number,
+            },
+            ancestryName: {
+                type: String,
+            },
+            classLabel: {
+                type: String,
+            },
         }; }
         static { this.styles = i$1 `
     h1 {
@@ -190,9 +409,9 @@
         <h1>${this.name}</h1>
 
         <ul>
-          <li>6th Level</li>
-          <li>Gnome</li>
-          <li>Rogue</li>
+          <li>Level ${this.level}</li>
+          <li>${this.ancestryName}</li>
+          <li>${this.classLabel}</li>
         </ul>
       </section>
     `;
@@ -202,68 +421,39 @@
         e("character-header")
     ], CharacterHeader);
 
-    let PagesHome$1 = class PagesHome extends ApplicationComponent {
-        static { this.properties = {
-            value: {
-                type: Number,
-            },
-            label: {
-                type: String,
-            },
-            max: {
-                type: Number,
-            },
-            color: {
-                type: String,
-            },
-        }; }
-        static { this.styles = i$1 `
-    :host {
-      display: block;
-    }
-
-    label {
-      font-size: 10px;
-    }
-
-    #bar {
-      height: 10px;
-
-      border: 1px solid black;
-      border-radius: 10px;
-
-      background: left / 200%;
-
-      transition: background-position linear 1s;
-    }
-  `; }
-        damageStyles() {
-            const value = this.value / this.max * 100;
-            return `
-      background-position: calc(100% - ${value}%);
-      background-image: linear-gradient(
-        to right,
-        ${this.color} 50%,
-        transparent 50%
-      );
-    `;
-        }
-        render() {
-            return y `
-      <label>${this.label}</label>
-
-      <div
-        id="bar"
-        style="${this.damageStyles()}"
-      ></div>
-    `;
-        }
-    };
-    PagesHome$1 = __decorate([
-        e("progress-bar")
-    ], PagesHome$1);
-
     let PagesHome = class PagesHome extends ApplicationComponent {
+        constructor() {
+            super({ store });
+        }
+        character() {
+            return store.state['character'];
+        }
+        abilityScoreFragments() {
+            const scores = this.character()['abilityScores'];
+            return scores.map((score) => {
+                return y `
+        <ability-score
+          name="${score.name}"
+          value=${score.value}
+          proficient=${score.proficient}
+        ></ability-score>
+      `;
+            });
+        }
+        healthFragments() {
+            const characteristics = this.character()['health'];
+            return characteristics.map((characteristic) => {
+                return y `
+        <progress-bar
+          style="width: 40%;"
+          label="${characteristic.label}"
+          value=${characteristic.value}
+          max=${characteristic.max}
+          color="${characteristic.color}"
+        ></progress-bar>
+      `;
+            });
+        }
         static { this.styles = i$1 `
     :host {
       display: block;
@@ -280,68 +470,25 @@
         render() {
             return y `
       <character-header
-        name="Cabot Snoodlepuff"
+        name="${this.character().name}"
+        level=${this.character().level}
+        ancestryName="${this.character().ancestry.name}"
+        classLabel="${this.character().class.name}"
       ></character-header>
 
       <section id="ability-scores">
-        <ability-score
-          name="Dexterity"
-          value=16
-          proficient=true
-        ></ability-score>
-
-        <ability-score
-          name="Constitution"
-          value=16
-          proficient=false
-        ></ability-score>
-
-        <ability-score
-          name="Strength"
-          value=16
-          proficient=false
-        ></ability-score>
-
-        <ability-score
-          name="Charisma"
-          value=16
-          proficient=false
-        ></ability-score>
-
-        <ability-score
-          name="Intelligence"
-          value=16
-          proficient=true
-        ></ability-score>
-
-        <ability-score
-          name="Wisdom"
-          value=16
-          proficient=false
-        ></ability-score>
+        ${this.abilityScoreFragments()}
       </section>
 
       <section part="health-points">
-        <progress-bar
-          label="Health points"
-          value=34
-          max=100
-          color="red"
-        ></progress-bar>
-
-        <progress-bar
-          style="width: 40%;"
-          label="Temporary health points"
-          value=8
-          max=10
-          color="blue"
-        ></progress-bar>
+        ${this.healthFragments()}
       </section>
     `;
         }
     };
     PagesHome = __decorate([
-        e("pages-home")
+        e("pages-home"),
+        __metadata("design:paramtypes", [])
     ], PagesHome);
 
 })();

@@ -2,13 +2,65 @@ import { html, css } from 'lit'
 import { customElement } from 'lit/decorators.js'
 
 import ApplicationComponent from 'shared/application_component'
+import store from './store'
+
+import 'components/progress-bar'
 import './components/ability-score'
 import './components/character-header'
 
-import 'components/progress-bar'
+type AbilityScore = {
+  name: string,
+  value: number,
+  proficient: boolean,
+}
+
+type HealthCharacteristic = {
+  label: string,
+  value: number,
+  max: number,
+  color: string,
+}
 
 @customElement("pages-home")
 export default class PagesHome extends ApplicationComponent {
+  constructor() {
+    super({ store })
+  }
+
+  character() {
+    return store.state['character']
+  }
+
+  abilityScoreFragments() {
+    const scores = this.character()['abilityScores']
+
+    return scores.map((score: AbilityScore) => {
+      return html`
+        <ability-score
+          name="${score.name}"
+          value=${score.value}
+          proficient=${score.proficient}
+        ></ability-score>
+      `
+    })
+  }
+
+  healthFragments() {
+    const characteristics = this.character()['health']
+
+    return characteristics.map((characteristic: HealthCharacteristic) => {
+      return html`
+        <progress-bar
+          style="width: 40%;"
+          label="${characteristic.label}"
+          value=${characteristic.value}
+          max=${characteristic.max}
+          color="${characteristic.color}"
+        ></progress-bar>
+      `
+    })
+  }
+
   static override styles = css`
     :host {
       display: block;
@@ -25,62 +77,18 @@ export default class PagesHome extends ApplicationComponent {
   override render() {
     return html`
       <character-header
-        name="Cabot Snoodlepuff"
+        name="${this.character().name}"
+        level=${this.character().level}
+        ancestryName="${this.character().ancestry.name}"
+        classLabel="${this.character().class.name}"
       ></character-header>
 
       <section id="ability-scores">
-        <ability-score
-          name="Dexterity"
-          value=16
-          proficient=true
-        ></ability-score>
-
-        <ability-score
-          name="Constitution"
-          value=16
-          proficient=false
-        ></ability-score>
-
-        <ability-score
-          name="Strength"
-          value=16
-          proficient=false
-        ></ability-score>
-
-        <ability-score
-          name="Charisma"
-          value=16
-          proficient=false
-        ></ability-score>
-
-        <ability-score
-          name="Intelligence"
-          value=16
-          proficient=true
-        ></ability-score>
-
-        <ability-score
-          name="Wisdom"
-          value=16
-          proficient=false
-        ></ability-score>
+        ${this.abilityScoreFragments()}
       </section>
 
       <section part="health-points">
-        <progress-bar
-          label="Health points"
-          value=34
-          max=100
-          color="red"
-        ></progress-bar>
-
-        <progress-bar
-          style="width: 40%;"
-          label="Temporary health points"
-          value=8
-          max=10
-          color="blue"
-        ></progress-bar>
+        ${this.healthFragments()}
       </section>
     `
   }
