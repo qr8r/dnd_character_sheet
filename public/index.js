@@ -167,7 +167,7 @@
                     color: 'red',
                 },
                 {
-                    label: 'Health points',
+                    label: 'Temporary health points',
                     value: 8,
                     max: 10,
                     color: 'blue',
@@ -442,10 +442,15 @@
         }
         healthFragments() {
             const characteristics = this.character()['health'];
+            const maxValues = characteristics.map((c) => {
+                return c.max;
+            });
+            const maxValue = Math.max(...maxValues);
             return characteristics.map((characteristic) => {
+                const size = this.healthBarSize(characteristic.max, maxValue);
                 return y `
         <progress-bar
-          style="width: 40%;"
+          style="width: ${size}%;"
           label="${characteristic.label}"
           value=${characteristic.value}
           max=${characteristic.max}
@@ -453,6 +458,9 @@
         ></progress-bar>
       `;
             });
+        }
+        healthBarSize(value, maxValue) {
+            return Math.round(value / maxValue * 100);
         }
         static { this.styles = i$1 `
     :host {

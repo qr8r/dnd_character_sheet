@@ -50,10 +50,10 @@ export default class PagesHome extends ApplicationComponent {
     const value = this.value / this.max * 100
 
     return `
-      background-position: calc(100% - ${ value }%);
+      background-position: calc(100% - ${value}%);
       background-image: linear-gradient(
         to right,
-        ${ this.color } 50%,
+        ${this.color} 50%,
         transparent 50%
       );
     `
@@ -61,11 +61,11 @@ export default class PagesHome extends ApplicationComponent {
 
   override render() {
     return html`
-      <label>${ this.label }</label>
+      <label>${this.label}</label>
 
       <div
         id="bar"
-        style="${ this.damageStyles() }"
+        style="${this.damageStyles()}"
       ></div>
     `
   }

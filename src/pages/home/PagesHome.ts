@@ -47,11 +47,17 @@ export default class PagesHome extends ApplicationComponent {
 
   healthFragments() {
     const characteristics = this.character()['health']
+    const maxValues = characteristics.map((c: HealthCharacteristic) => {
+      return c.max
+    })
+    const maxValue = Math.max(...maxValues)
 
     return characteristics.map((characteristic: HealthCharacteristic) => {
+      const size = this.healthBarSize(characteristic.max, maxValue)
+
       return html`
         <progress-bar
-          style="width: 40%;"
+          style="width: ${size}%;"
           label="${characteristic.label}"
           value=${characteristic.value}
           max=${characteristic.max}
@@ -59,6 +65,10 @@ export default class PagesHome extends ApplicationComponent {
         ></progress-bar>
       `
     })
+  }
+
+  healthBarSize(value: number, maxValue: number) {
+    return Math.round(value / maxValue * 100)
   }
 
   static override styles = css`

@@ -16,7 +16,7 @@ export default {
         color: 'red',
       },
       {
-        label: 'Health points',
+        label: 'Temporary health points',
         value: 8,
         max: 10,
         color: 'blue',
