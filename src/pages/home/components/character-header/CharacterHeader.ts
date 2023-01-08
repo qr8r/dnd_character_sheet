@@ -6,11 +6,23 @@ import ApplicationComponent from 'shared/application_component'
 @customElement("character-header")
 export default class CharacterHeader extends ApplicationComponent {
   declare name: string
+  declare level: number
+  declare ancestryName: string
+  declare classLabel: string
 
   static override properties = {
     name: {
       type: String,
-    }
+    },
+    level: {
+      type: Number,
+    },
+    ancestryName: {
+      type: String,
+    },
+    classLabel: {
+      type: String,
+    },
   }
 
   static override styles = css`
@@ -45,9 +57,9 @@ export default class CharacterHeader extends ApplicationComponent {
         <h1>${this.name}</h1>
 
         <ul>
-          <li>6th Level</li>
-          <li>Gnome</li>
-          <li>Rogue</li>
+          <li>Level ${this.level}</li>
+          <li>${this.ancestryName}</li>
+          <li>${this.classLabel}</li>
         </ul>
       </section>
     `
